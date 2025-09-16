@@ -1,14 +1,21 @@
 import Range from "@/components/Range/Range";
 import Link from "next/link";
+import { 
+  fetchFromApi, 
+  API_ENDPOINTS, 
+  type RangeFixedResponse 
+} from "@/config/api";
 
-async function getRangeData() {
-  const res = await fetch('http://localhost:8080/api/range/fixed', {
-    cache: 'no-store'
-  });
-  if (!res.ok) {
+async function getRangeData(): Promise<RangeFixedResponse> {
+  try {
+    const data = await fetchFromApi<RangeFixedResponse>(
+      API_ENDPOINTS.RANGE_FIXED,
+      { cache: 'no-store' }
+    );
+    return data;
+  } catch (error) {
     return { rangeValues: [1.99, 5.99, 10.99, 30.99, 50.99, 70.99] };
   }
-  return res.json();
 }
 
 export default async function Exercise2Page() {

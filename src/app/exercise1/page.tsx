@@ -1,14 +1,21 @@
 import Range from "@/components/Range/Range";
 import Link from "next/link";
+import { 
+  fetchFromApi, 
+  API_ENDPOINTS, 
+  type RangeNormalResponse 
+} from "@/config/api";
 
-async function getRangeData() {
-  const res = await fetch('http://localhost:8080/api/range/normal', {
-    cache: 'no-store'
-  });
-  if (!res.ok) {
+async function getRangeData(): Promise<RangeNormalResponse> {
+  try {
+    const data = await fetchFromApi<RangeNormalResponse>(
+      API_ENDPOINTS.RANGE_NORMAL,
+      { cache: 'no-store' }
+    );
+    return data;
+  } catch (error) {
     return { min: 1, max: 100 };
   }
-  return res.json();
 }
 
 export default async function Exercise1Page() {

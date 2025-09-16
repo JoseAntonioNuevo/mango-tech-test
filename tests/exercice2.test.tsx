@@ -39,7 +39,11 @@ describe('Exercise2 Page', () => {
   it('should handle fetch errors gracefully', async () => {
     ;(global.fetch as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('Network error'))
     
-    await expect(Exercise2Page()).rejects.toThrow('Network error')
+    const page = await Exercise2Page()
+    const { container } = render(page)
+    
+    expect(container.querySelector('[role="slider"]')).toBeInTheDocument()
+    expect(container.textContent).toContain('1.99€')
   })
 
   it('should handle HTTP error status', async () => {
@@ -60,7 +64,11 @@ describe('Exercise2 Page', () => {
     abortError.name = 'AbortError'
     ;(global.fetch as ReturnType<typeof vi.fn>).mockRejectedValue(abortError)
     
-    await expect(Exercise2Page()).rejects.toThrow('Aborted')
+    const page = await Exercise2Page()
+    const { container } = render(page)
+    
+    expect(container.querySelector('[role="slider"]')).toBeInTheDocument()
+    expect(container.textContent).toContain('1.99€')
   })
 
   it('should render navigation links', async () => {

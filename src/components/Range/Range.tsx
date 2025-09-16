@@ -18,6 +18,7 @@ import {
   getPositionFromEvent,
   debounce,
 } from "./Range.utils";
+import { roundToDecimals } from "@/utils/number";
 
 export default function Range(props: RangeProps) {
   const { mode, onChange } = props;
@@ -112,16 +113,16 @@ export default function Range(props: RangeProps) {
   );
 
   useEffect(() => {
-    setTempMinInput(String(minValue));
+    setTempMinInput(String(roundToDecimals(minValue, 2)));
   }, [minValue]);
 
   useEffect(() => {
-    setTempMaxInput(String(maxValue));
+    setTempMaxInput(String(roundToDecimals(maxValue, 2)));
   }, [maxValue]);
 
   useEffect(() => {
     if (mode === "continuous" && onChange) {
-      onChange({ min: minValue, max: maxValue });
+      onChange({ min: roundToDecimals(minValue, 2), max: roundToDecimals(maxValue, 2) });
     }
   }, [minValue, maxValue, mode, onChange]);
 
@@ -133,8 +134,8 @@ export default function Range(props: RangeProps) {
         onChange({
           minIndex,
           maxIndex,
-          min: minValue,
-          max: maxValue,
+          min: roundToDecimals(minValue, 2),
+          max: roundToDecimals(maxValue, 2),
         });
       }
     }
@@ -152,7 +153,7 @@ export default function Range(props: RangeProps) {
           props.min,
           Math.min(maxValue, props.max)
         );
-        debouncedSetMin(clampedValue);
+        debouncedSetMin(roundToDecimals(clampedValue, 2));
       }
     },
     [maxValue, props, debouncedSetMin]
@@ -170,7 +171,7 @@ export default function Range(props: RangeProps) {
           Math.max(minValue, props.min),
           props.max
         );
-        debouncedSetMax(clampedValue);
+        debouncedSetMax(roundToDecimals(clampedValue, 2));
       }
     },
     [minValue, props, debouncedSetMax]
@@ -187,8 +188,9 @@ export default function Range(props: RangeProps) {
           props.min,
           Math.min(maxValue, props.max)
         );
-        setMinValue(clampedValue);
-        setTempMinInput(String(clampedValue));
+        const roundedValue = roundToDecimals(clampedValue, 2);
+        setMinValue(roundedValue);
+        setTempMinInput(String(roundedValue));
       }
     }
   }, [tempMinInput, minValue, maxValue, props]);
@@ -204,8 +206,9 @@ export default function Range(props: RangeProps) {
           Math.max(minValue, props.min),
           props.max
         );
-        setMaxValue(clampedValue);
-        setTempMaxInput(String(clampedValue));
+        const roundedValue = roundToDecimals(clampedValue, 2);
+        setMaxValue(roundedValue);
+        setTempMaxInput(String(roundedValue));
       }
     }
   }, [tempMaxInput, minValue, maxValue, props]);
@@ -230,14 +233,14 @@ export default function Range(props: RangeProps) {
               props.min,
               maxValue - (props.step || 1)
             );
-            setMinValue(clampedValue);
+            setMinValue(roundToDecimals(clampedValue, 2));
           } else {
             const clampedValue = clamp(
               newValue,
               minValue + (props.step || 1),
               props.max
             );
-            setMaxValue(clampedValue);
+            setMaxValue(roundToDecimals(clampedValue, 2));
           }
         } else {
           const rawValue = positionToValue(position, bounds.min, bounds.max);
@@ -383,10 +386,10 @@ export default function Range(props: RangeProps) {
           event.preventDefault();
           if (isMin) {
             const clampedValue = clamp(newValue, props.min, maxValue - step);
-            setMinValue(clampedValue);
+            setMinValue(roundToDecimals(clampedValue, 2));
           } else {
             const clampedValue = clamp(newValue, minValue + step, props.max);
-            setMaxValue(clampedValue);
+            setMaxValue(roundToDecimals(clampedValue, 2));
           }
         }
       } else {
@@ -636,7 +639,7 @@ export default function Range(props: RangeProps) {
               aria-label="Minimum value slider"
               aria-valuemin={bounds.min}
               aria-valuemax={bounds.max}
-              aria-valuenow={minValue}
+              aria-valuenow={roundToDecimals(minValue, 2)}
               aria-valuetext={displayMinValue.toString()}
               tabIndex={0}
             />
@@ -654,7 +657,7 @@ export default function Range(props: RangeProps) {
               aria-label="Maximum value slider"
               aria-valuemin={bounds.min}
               aria-valuemax={bounds.max}
-              aria-valuenow={maxValue}
+              aria-valuenow={roundToDecimals(maxValue, 2)}
               aria-valuetext={displayMaxValue.toString()}
               tabIndex={0}
             />

@@ -1,6 +1,10 @@
+import { roundToDecimals as round } from '@/utils/number';
+
 export function clamp(value: number, min: number, max: number): number {
   return Math.min(Math.max(value, min), max);
 }
+
+export const roundToDecimals = round;
 
 export function valueToPosition(
   value: number,
@@ -31,14 +35,18 @@ export function getValueIndex(value: number, values: number[]): number {
 }
 
 export function formatCurrency(value: number, currency = "EUR"): string {
+  const roundedValue = roundToDecimals(value, 2);
+  
   if (currency === "€" || currency === "$" || currency === "£") {
-    return `${value}${currency}`;
+    return `${roundedValue.toFixed(2)}${currency}`;
   }
   
   return new Intl.NumberFormat("es-ES", {
     style: "currency",
     currency: currency,
-  }).format(value);
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(roundedValue);
 }
 
 export function getPositionFromEvent(

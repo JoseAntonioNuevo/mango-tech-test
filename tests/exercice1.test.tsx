@@ -42,7 +42,11 @@ describe('Exercise1 Page', () => {
     const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
     ;(global.fetch as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('Network error'))
     
-    await expect(Exercise1Page()).rejects.toThrow('Network error')
+    const page = await Exercise1Page()
+    const { container } = render(page)
+    
+    const infoText = container.textContent
+    expect(infoText).toContain('1 to 100')
     consoleError.mockRestore()
   })
 
@@ -65,7 +69,11 @@ describe('Exercise1 Page', () => {
     abortError.name = 'AbortError'
     ;(global.fetch as ReturnType<typeof vi.fn>).mockRejectedValue(abortError)
     
-    await expect(Exercise1Page()).rejects.toThrow('Aborted')
+    const page = await Exercise1Page()
+    const { container } = render(page)
+    
+    const infoText = container.textContent
+    expect(infoText).toContain('1 to 100')
     consoleError.mockRestore()
   })
 
