@@ -1,32 +1,15 @@
 import Range from "@/components/Range/Range";
 import Link from "next/link";
 
-async function getRangeData() {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 5000);
-
-  try {
-    const response = await fetch("http://localhost:8080/api/range/normal", {
-      signal: controller.signal,
-    });
-    clearTimeout(timeoutId);
-
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    return response.json();
-  } catch (error: unknown) {
-    clearTimeout(timeoutId);
-    if (error instanceof Error && error.name === "AbortError") {
-      throw new Error("Request timeout - please try again");
-    }
-    throw error;
-  }
+function getRangeData() {
+  return {
+    min: 1,
+    max: 100,
+  };
 }
 
-export default async function Exercise1Page() {
-  const rangeData = await getRangeData();
+export default function Exercise1Page() {
+  const rangeData = getRangeData();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background-secondary to-background">
