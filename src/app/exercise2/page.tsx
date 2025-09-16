@@ -1,14 +1,18 @@
 import Range from "@/components/Range/Range";
 import Link from "next/link";
 
-function getRangeData() {
-  return {
-    rangeValues: [1.99, 5.99, 10.99, 30.99, 50.99, 70.99],
-  };
+async function getRangeData() {
+  const res = await fetch('http://localhost:8080/api/range/fixed', {
+    cache: 'no-store'
+  });
+  if (!res.ok) {
+    return { rangeValues: [1.99, 5.99, 10.99, 30.99, 50.99, 70.99] };
+  }
+  return res.json();
 }
 
-export default function Exercise2Page() {
-  const rangeData = getRangeData();
+export default async function Exercise2Page() {
+  const rangeData = await getRangeData();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background-secondary to-background">

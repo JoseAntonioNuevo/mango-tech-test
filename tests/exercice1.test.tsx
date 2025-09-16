@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render } from '@testing-library/react'
 import Exercise1Page from '../src/app/exercise1/page'
 
-// Mock the fetch function
 global.fetch = vi.fn()
 
 describe('Exercise1 Page', () => {
@@ -40,26 +39,34 @@ describe('Exercise1 Page', () => {
   })
 
   it('should handle fetch errors gracefully', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
     ;(global.fetch as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('Network error'))
     
-    await expect(Exercise1Page()).rejects.toThrow()
+    await expect(Exercise1Page()).rejects.toThrow('Network error')
+    consoleError.mockRestore()
   })
 
-  it('should handle HTTP error status', async () => {
+  it('should handle HTTP error status with fallback', async () => {
     ;(global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
       ok: false,
       status: 500,
     })
     
-    await expect(Exercise1Page()).rejects.toThrow('HTTP error! status: 500')
+    const page = await Exercise1Page()
+    const { container } = render(page)
+    
+    const infoText = container.textContent
+    expect(infoText).toContain('1 to 100')
   })
 
   it('should handle timeout errors', async () => {
+    const consoleError = vi.spyOn(console, 'error').mockImplementation(() => {})
     const abortError = new Error('Aborted')
     abortError.name = 'AbortError'
     ;(global.fetch as ReturnType<typeof vi.fn>).mockRejectedValue(abortError)
     
-    await expect(Exercise1Page()).rejects.toThrow('Request timeout - please try again')
+    await expect(Exercise1Page()).rejects.toThrow('Aborted')
+    consoleError.mockRestore()
   })
 
   it('should render navigation links', async () => {

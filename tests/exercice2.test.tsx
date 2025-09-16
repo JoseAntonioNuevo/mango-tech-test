@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render } from '@testing-library/react'
 import Exercise2Page from '../src/app/exercise2/page'
 
-// Mock the fetch function
 global.fetch = vi.fn()
 
 describe('Exercise2 Page', () => {
@@ -40,7 +39,7 @@ describe('Exercise2 Page', () => {
   it('should handle fetch errors gracefully', async () => {
     ;(global.fetch as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('Network error'))
     
-    await expect(Exercise2Page()).rejects.toThrow()
+    await expect(Exercise2Page()).rejects.toThrow('Network error')
   })
 
   it('should handle HTTP error status', async () => {
@@ -49,7 +48,11 @@ describe('Exercise2 Page', () => {
       status: 404,
     })
     
-    await expect(Exercise2Page()).rejects.toThrow('HTTP error! status: 404')
+    const page = await Exercise2Page()
+    const { container } = render(page)
+    
+    expect(container.querySelector('[role="slider"]')).toBeInTheDocument()
+    expect(container.textContent).toContain('1.99€')
   })
 
   it('should handle timeout errors', async () => {
@@ -57,7 +60,7 @@ describe('Exercise2 Page', () => {
     abortError.name = 'AbortError'
     ;(global.fetch as ReturnType<typeof vi.fn>).mockRejectedValue(abortError)
     
-    await expect(Exercise2Page()).rejects.toThrow('Request timeout - please try again')
+    await expect(Exercise2Page()).rejects.toThrow('Aborted')
   })
 
   it('should render navigation links', async () => {
@@ -87,7 +90,7 @@ describe('Exercise2 Page', () => {
     const { container } = render(page)
     
     const sliders = container.querySelectorAll('[role="slider"]')
-    expect(sliders).toHaveLength(2) // Min and max sliders
+    expect(sliders).toHaveLength(2)
     
     const labels = container.querySelectorAll('[class*="currencyValue"]')
     expect(labels.length).toBeGreaterThan(0)

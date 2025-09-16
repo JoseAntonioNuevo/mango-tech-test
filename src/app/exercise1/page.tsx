@@ -1,15 +1,18 @@
 import Range from "@/components/Range/Range";
 import Link from "next/link";
 
-function getRangeData() {
-  return {
-    min: 1,
-    max: 100,
-  };
+async function getRangeData() {
+  const res = await fetch('http://localhost:8080/api/range/normal', {
+    cache: 'no-store'
+  });
+  if (!res.ok) {
+    return { min: 1, max: 100 };
+  }
+  return res.json();
 }
 
-export default function Exercise1Page() {
-  const rangeData = getRangeData();
+export default async function Exercise1Page() {
+  const rangeData = await getRangeData();
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-background-secondary to-background">
