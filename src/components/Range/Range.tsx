@@ -20,6 +20,8 @@ import {
 } from "./Range.utils";
 
 export default function Range(props: RangeProps) {
+  const { mode, onChange } = props;
+  const values = props.mode === "discrete" ? props.values : undefined;
   const trackRef = useRef<HTMLDivElement>(null);
   const minHandleRef = useRef<HTMLDivElement>(null);
   const maxHandleRef = useRef<HTMLDivElement>(null);
@@ -118,17 +120,17 @@ export default function Range(props: RangeProps) {
   }, [maxValue]);
 
   useEffect(() => {
-    if (props.mode === "continuous" && props.onChange) {
-      props.onChange({ min: minValue, max: maxValue });
+    if (mode === "continuous" && onChange) {
+      onChange({ min: minValue, max: maxValue });
     }
-  }, [minValue, maxValue, props.mode, props.onChange]);
+  }, [minValue, maxValue, mode, onChange]);
 
   useEffect(() => {
-    if (props.mode === "discrete" && props.onChange) {
-      const minIndex = props.values.findIndex((v) => v === minValue);
-      const maxIndex = props.values.findIndex((v) => v === maxValue);
+    if (mode === "discrete" && onChange && values) {
+      const minIndex = values.findIndex((v) => v === minValue);
+      const maxIndex = values.findIndex((v) => v === maxValue);
       if (minIndex !== -1 && maxIndex !== -1) {
-        props.onChange({
+        onChange({
           minIndex,
           maxIndex,
           min: minValue,
@@ -136,7 +138,7 @@ export default function Range(props: RangeProps) {
         });
       }
     }
-  }, [minValue, maxValue, props.mode, props.onChange, ...(props.mode === "discrete" ? [props.values] : [])]);
+  }, [minValue, maxValue, mode, onChange, values]);
 
   const handleMinInputChange = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
