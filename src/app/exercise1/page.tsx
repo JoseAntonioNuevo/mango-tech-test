@@ -13,7 +13,7 @@ async function getRangeData(): Promise<RangeNormalResponse> {
       { cache: 'no-store' }
     );
     return data;
-  } catch (error) {
+  } catch {
     return { min: 1, max: 100 };
   }
 }

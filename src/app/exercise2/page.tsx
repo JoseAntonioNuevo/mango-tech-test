@@ -13,7 +13,7 @@ async function getRangeData(): Promise<RangeFixedResponse> {
       { cache: 'no-store' }
     );
     return data;
-  } catch (error) {
+  } catch {
     return { rangeValues: [1.99, 5.99, 10.99, 30.99, 50.99, 70.99] };
   }
 }

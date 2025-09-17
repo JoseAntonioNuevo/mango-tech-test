@@ -1,9 +1,3 @@
-interface ApiConfig {
-  baseUrl: string;
-  timeout?: number;
-  headers?: HeadersInit;
-}
-
 class ApiConfigError extends Error {
   constructor(message: string) {
     super(message);
